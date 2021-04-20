@@ -126,7 +126,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'kovisoft/slimv'
 "Plug 'skywind3000/vim-preview'
-Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx']}
+"Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx']}
 Plug 'ianks/vim-tsx', { 'for': 'typescript.tsx' }
 Plug 'baeuml/summerfruit256.vim'
 call plug#end()
