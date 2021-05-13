@@ -8,7 +8,9 @@ filetype off
 filetype plugin indent on
 
 syntax on
-if(has("termguicolors"))
+if(exists("+termguicolors"))
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
 
@@ -105,6 +107,8 @@ Plug 'liuchengxu/space-vim-theme'
 Plug 'liuchengxu/space-vim-dark'
 " Gruvbox
 Plug 'morhetz/gruvbox'
+" One half light
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
 " undo tree
 Plug 'mbbill/undotree'
 " fzf
@@ -196,11 +200,10 @@ set listchars=tab:›\ ,trail:•,extends:#,nbsp:.
 set number
 
 " Set status line display
-set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ [BUFFER=%n]\ %{strftime('%c')}
 
-let g:shades_of_purple_airline = 1
+"let g:shades_of_purple_airline = 1
 "let g:airline_theme='shades_of_purple'
-let g:airline_theme='base16_spacemacs'
+"let g:airline_theme='base16_spacemacs'
 " Encoding
 set encoding=utf-8
 set guicursor=n-v-c:block-Cursor
@@ -230,8 +233,12 @@ nnoremap <esc> :noh <return> <esc>
 "   Easy motion stuff
 "
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
+" s{char}{label} to move to {char}
 nmap s <Plug>(easymotion-overwin-f)
+" Biderectional & within line 't' motion
 map <Space>j <Plug>(easymotion-j)
+" Biderectional word 
+map <Space><Space>w <Plug>(easymotion-bd-w)
 map <Space>k <Plug>(easymotion-k)
 map <Space>h <Plug>(easymotion-linebackward)
 map <Space>l <Plug>(easymotion-lineforward)
@@ -307,6 +314,14 @@ command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
 "colorscheme shades_of_purple
 "colorscheme candid
 colorscheme gruvbox
-let g:lightline = { 'colorscheme': 'candid' }
+set t_Co=256
+set cursorline
+"colorscheme onehalfdark
+let g:airline_powerline_fonts = 1
+let g:airline_theme='bubblegum'
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ [BUFFER=%n]\ %{strftime('%c')}
+let g:airline_section_b= '%{strftime("%c")}'
+"let g:airline#extensions#tabline#formatter = 'default'
+"let g:lightline = { 'colorscheme': 'gruvbox' }
 set background=dark
 nnoremap <silent> <Space>bg :call BgToggle()<C-r>
