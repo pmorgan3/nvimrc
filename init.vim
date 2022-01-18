@@ -48,10 +48,11 @@ set laststatus=2
 " Display options
 set showmode
 set showcmd
-"call plug#begin('~/.config/nvim/plugged')
-call plug#begin(stdpath('data') . '/plugged')
+call plug#begin('~/.config/nvim/plugged')
+"call plug#begin(stdpath('data') . '/plugged')
 "Fugitive Vim Github Wrapper
 "Plug 'tpope/vim-fugitive'
+" Lisp
 " ctrlp
 Plug 'git@github.com:kien/ctrlp.vim.git'
 ""AutoComplete
@@ -70,15 +71,17 @@ Plug 'tpope/vim-rails'
 "Golang for vim
 "Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 ""JavaScript vim support
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
+"Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkHolme/yats.vim'
+Plug 'pangloss/vim-javascript', {'for': ['javascript', 'typescript']}
+Plug 'maxmellon/vim-jsx-pretty', {'for': 'javascriptreact'}
+Plug 'peitalin/vim-jsx-typescript', {'for':  'typescriptreact'}
 "color schemes
 "Plug 'flazz/vim-colorschemes'
 Plug 'kyoz/purify', {'rtp': 'vim'}
 ""Ruby for vim
 Plug 'vim-ruby/vim-ruby'
 "Typescript for vim
-"Plug 'leafgarland/typescript-vim'
 ""JSX for vim
 Plug 'mxw/vim-jsx'
 Plug 'yuezk/vim-js'
@@ -89,7 +92,6 @@ Plug 'elzr/vim-json'
 " Colorizor
 Plug 'gko/vim-coloresque'
 "Typescript syntax
-"Plug 'leafgarland/typescript-vim'
 ""Elixir config for vim
 Plug 'elixir-lang/vim-elixir'
 "Auto-format
@@ -124,14 +126,14 @@ Plug 'ryanoasis/vim-devicons'
 "Plug 'w0rp/ale'
 " Ctags bar
 Plug 'preservim/tagbar'
-Plug 'ludovicchabant/vim-gutentags'
+"Plug 'ludovicchabant/vim-gutentags'
+Plug 'APZelos/blamer.nvim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " TS syntax
-Plug 'HerringtonDarkholme/yats.vim'
+"Plug 'HerringtonDarkholme/yats.vim'
 Plug 'kovisoft/slimv'
 "Plug 'skywind3000/vim-preview'
-"Plug 'leafgarland/typescript-vim', {'for': ['typescript', 'typescript.tsx']}
-Plug 'ianks/vim-tsx', { 'for': 'typescript.tsx' }
+"Plug 'ianks/vim-tsx', { 'for': 'typescript.tsx' }
 Plug 'baeuml/summerfruit256.vim'
 call plug#end()
 " FZF
@@ -159,6 +161,8 @@ fun! BgToggle()
   endif
 endfun
 
+let g:blamer_enabled = 1
+let g:blamer_delay = 500
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -271,14 +275,52 @@ nmap <silent><Space>gr <Plug>(coc-references)
 " Automatically save and load folds
 autocmd BufWinLeave *.* mkview
 
+"set filetypes as typescriptreact
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
+"syncing
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 " Choose which autocomplete to use with which files
 "autocmd BufWinEnter *.* silent loadview"
+
+" higlighting for certain things
+hi ReduxKeywords ctermfg=204 guifg=#c678dd
+hi ReduxHooksKeywords ctermfg=204 guifg=#c176a7
+hi ReactLifeCycleMethods ctermfg=204 guifg=#d19a66
+hi ReactState guifg=#c176a7 
+hi ReactProps guifg=#d19a66
+hi tsxComponentName guifg=#F99575
+hi tsxTagName guifg=#e06c75
+hi tsxCloseComponentName guifg=#E06c75
 
 " Call the .vimrc.plug file
 " if filereadable(expand("~/.vimrc.plug"))
 "    source ~/.vimrc.plug
 " endif
+" Do code action
+nmap <Space>do <Plug>(coc-codeaction)
 
+"conditionally enable eslint and prettier
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+"Auto diagnostic
+"function! ShowDocIfNoDiagnostic(timer_id)
+"  if (coc#float#has_float() == 0 && CocHasProvider('hover') == 1)
+"    silent call CocActionAsync('doHover')
+"  endif
+"endfunction
+
+"function! s:show_hover_doc()
+"  call timer_start(500, 'ShowDocIfNoDiagnostic')
+"endfunction
+
+"autocmd CursorHoldI * :call <SID>show_hover_doc()
+"autocmd CursorHold * :call <SID>show_hover_doc()
 " Fix tmux rendering issues
 if &term =~ '256color'
   set t_ut=
