@@ -45,6 +45,7 @@ set ttyfast
 " Status bar
 set laststatus=2
 
+set mouse=a
 " Display options
 set showmode
 set showcmd
@@ -54,7 +55,7 @@ call plug#begin('~/.config/nvim/plugged')
 "Plug 'tpope/vim-fugitive'
 " Lisp
 " ctrlp
-Plug 'git@github.com:kien/ctrlp.vim.git'
+"Plug 'git@github.com:kien/ctrlp.vim.git'
 ""AutoComplete
 "Plug 'ycm-core/YouCompleteMe'
 " Format
@@ -71,11 +72,12 @@ Plug 'tpope/vim-rails'
 "Golang for vim
 "Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 ""JavaScript vim support
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+"Plug 'HerringtonDarkHolme/yats.vim'
+"Plug 'pangloss/vim-javascript'
 "Plug 'leafgarland/typescript-vim'
-Plug 'HerringtonDarkHolme/yats.vim'
-Plug 'pangloss/vim-javascript', {'for': ['javascript', 'typescript']}
-Plug 'maxmellon/vim-jsx-pretty', {'for': 'javascriptreact'}
-Plug 'peitalin/vim-jsx-typescript', {'for':  'typescriptreact'}
+"Plug 'maxmellon/vim-jsx-pretty'
+"Plug 'peitalin/vim-jsx-typescript', {'for':  'typescriptreact'}
 "color schemes
 "Plug 'flazz/vim-colorschemes'
 Plug 'kyoz/purify', {'rtp': 'vim'}
@@ -83,8 +85,8 @@ Plug 'kyoz/purify', {'rtp': 'vim'}
 Plug 'vim-ruby/vim-ruby'
 "Typescript for vim
 ""JSX for vim
-Plug 'mxw/vim-jsx'
-Plug 'yuezk/vim-js'
+"Plug 'mxw/vim-jsx'
+"Plug 'yuezk/vim-js'
 "JSON highlighting
 Plug 'elzr/vim-json'
 ""Markdown syntax
@@ -108,7 +110,9 @@ Plug 'flrnd/candid.vim'
 Plug 'liuchengxu/space-vim-theme'
 Plug 'liuchengxu/space-vim-dark'
 " Gruvbox
-Plug 'morhetz/gruvbox'
+"Plug 'morhetz/gruvbox'
+"Plug 'ellisonleao/gruvbox.nvim'
+Plug 'rafamadriz/gruvbox'
 " One half light
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 " undo tree
@@ -122,6 +126,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " vim icons
 Plug 'ryanoasis/vim-devicons'
+"Plug 'kyazdani42/nvim-web-devicons'
+" Tabs
+Plug 'akinsho/bufferline.nvim'
 ""Linting
 "Plug 'w0rp/ale'
 " Ctags bar
@@ -142,7 +149,7 @@ let g:fzf_action = {
       \ 'ctrl-t': 'tab split',
       \ 'ctrl-x': 'split',
       \ 'ctrl-v': 'vsplit' }
-"let g:fzf_history_dir = '~/.local/share/fzf-history'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 let g:fzf_tags_command = 'ctags -R --options=C:\Users\pmorg\defaults.ctags'
 "nnoremap <Space>g :Rg<CR>
 nnoremap <F8> :Tags<CR>
@@ -161,6 +168,83 @@ fun! BgToggle()
   endif
 endfun
 
+" Web icon
+set termguicolors
+lua << EOF
+--require'nvim-web-devicons'.setup {
+--default = true;
+--}
+require('bufferline').setup {
+  options = {
+    numbers = "none",
+    --- @deprecated, please specify numbers as a function to customize the styling
+    --number_style =  "" , -- buffer_id at index 1, ordinal at index 2
+    close_command = "bdelete! %d",       -- can be a string | function, see "Mouse actions"
+    right_mouse_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
+    left_mouse_command = "buffer %d",    -- can be a string | function, see "Mouse actions"
+    middle_mouse_command = nil,          -- can be a string | function, see "Mouse actions"
+    -- NOTE: this plugin is designed with this icon in mind,
+    -- and so changing this is NOT recommended, this is intended
+    -- as an escape hatch for people who cannot bear it for whatever reason
+    indicator_icon = '▎',
+    buffer_close_icon = '',
+    modified_icon = '●',
+    close_icon = '',
+    left_trunc_marker = '',
+    right_trunc_marker = '',
+    --- name_formatter can be used to change the buffer's label in the bufferline.
+    --- Please note some names can/will break the
+    --- bufferline so use this at your discretion knowing that it has
+    --- some limitations that will *NOT* be fixed.
+    name_formatter = function(buf)  -- buf contains a "name", "path" and "bufnr"
+      -- remove extension from markdown files for example
+      if buf.name:match('%.md') then
+        return vim.fn.fnamemodify(buf.name, ':t:r')
+      end
+    end,
+    max_name_length = 18,
+    max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
+    tab_size = 18,
+    diagnostics = "coc",
+    diagnostics_update_in_insert = false,
+    diagnostics_indicator = function(count, level, diagnostics_dict, context)
+      return "("..count..")"
+    end,
+    -- NOTE: this will be called a lot so don't do any heavy processing here
+    custom_filter = function(buf_number, buf_numbers)
+      -- filter out filetypes you don't want to see
+      if vim.bo[buf_number].filetype ~= "<i-dont-want-to-see-this>" then
+        return true
+      end
+      -- filter out by buffer name
+      if vim.fn.bufname(buf_number) ~= "<buffer-name-I-dont-want>" then
+        return true
+      end
+      -- filter out based on arbitrary rules
+      -- e.g. filter out vim wiki buffer from tabline in your work repo
+      if vim.fn.getcwd() == "<work-repo>" and vim.bo[buf_number].filetype ~= "wiki" then
+        return true
+      end
+      -- filter out by it's index number in list (don't show first buffer)
+      if buf_numbers[1] ~= buf_number then
+        return true
+      end
+    end,
+    offsets = { filetype = "NERDTree", text = "File Explorer", text_align = "left" },
+    show_buffer_icons = true, -- disable filetype icons for buffers
+    show_buffer_close_icons = true,
+    show_close_icon = true,
+    show_tab_indicators = true,
+    persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
+    -- can also be a table containing 2 custom separators
+    -- [focused and unfocused]. eg: { '|', '|' }
+    separator_style =  "thick" ,
+    enforce_regular_tabs = false,
+    always_show_bufferline = true,
+    sort_by = 'tabs'
+  } 
+}
+EOF
 let g:blamer_enabled = 1
 let g:blamer_delay = 500
 " Use K to show documentation in preview window.
@@ -191,8 +275,10 @@ set updatetime=300
 set cmdheight=2
 " Border color
 let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8, 'yoffset':0.5, 'xoffset':0.5, 'highlight': 'Todo', 'border':'sharp' } }
-let $FZF_DEFAULT_OPTS = '--layout=reverse --info=inline'
+let $FZF_DEFAULT_OPTS = "--layout=reverse --info=inline --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
+nmap <silent> <C-P> :Files<CR>
+
 " Highlight matching pairs of brackets. Use the '%' character to jump between them.
 set matchpairs+=<:>
 
@@ -330,7 +416,12 @@ set re=0
 "colorscheme materialtheme
 set completeopt=menuone,preview
 "set nocp
-let g:ctrlp_custom_ignore = 'node_modules\|git'
+"let g:ctrlp_custom_ignore = 'node_modules\|/.git|PRjobs\|/platform\'
+let g:ctrlp_custom_ignore = {
+	\ 'dir':  '\v[\/]\.(git|hg|svn)$',
+	\ 'file': '\v\.(exe|so|dll|java|groovy)$',
+	\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+	\ }
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 "call pathogen#infect()
 "call pathogen#helptags()
