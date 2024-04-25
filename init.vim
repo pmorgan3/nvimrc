@@ -49,15 +49,19 @@ set mouse=a
 " Display options
 set showmode
 set showcmd
-call plug#begin('~/.config/nvim/plugged')
+call plug#begin('~/.config/nvim/plugged') 
+" Github copilot
+Plug 'github/copilot.vim'
 "call plug#begin(stdpath('data') . '/plugged')
 "Fugitive Vim Github Wrapper
 "Plug 'tpope/vim-fugitive'
 " Lisp
 " ctrlp
 "Plug 'git@github.com:kien/ctrlp.vim.git'
+
 ""AutoComplete
 "Plug 'ycm-core/YouCompleteMe'
+" Plug 'HiPhish/rainbow-delimiters.nvim'
 " Format
 Plug 'Chiel92/vim-autoformat'
 " easymotion
@@ -89,7 +93,7 @@ Plug 'vim-ruby/vim-ruby'
 "Plug 'yuezk/vim-js'
 "JSON highlighting
 Plug 'elzr/vim-json'
-""Markdown syntax
+"Markdown syntax
 "Plug 'plasticboy/vim-markdown'
 " Colorizor
 Plug 'gko/vim-coloresque'
@@ -418,10 +422,10 @@ set completeopt=menuone,preview
 "set nocp
 "let g:ctrlp_custom_ignore = 'node_modules\|/.git|PRjobs\|/platform\'
 let g:ctrlp_custom_ignore = {
-	\ 'dir':  '\v[\/]\.(git|hg|svn)$',
-	\ 'file': '\v\.(exe|so|dll|java|groovy)$',
-	\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-	\ }
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll|java|groovy)$',
+  \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+  \ }
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 "call pathogen#infect()
 "call pathogen#helptags()
@@ -458,3 +462,28 @@ let g:airline_section_b= '%{strftime("%c")}'
 "let g:lightline = { 'colorscheme': 'gruvbox' }
 set background=dark
 nnoremap <silent> <Space>bg :call BgToggle()<C-r>
+"""
+let g:rainbow_delimiters = {
+    \ 'strategy': {
+       \ '': rainbow_delimiters#strategy.global,
+       \ 'vim': rainbow_delimiters#strategy.local,
+    \ },
+    \ 'query': {
+       \ '': 'rainbow-delimiters',
+       \ 'lua': 'rainbow-blocks',
+    \ },
+    \ 'priority': {
+       \ '': 110,
+       \ 'lua': 210,
+    \ },
+    \ 'highlight': [
+       \ 'RainbowDelimiterRed',
+       \ 'RainbowDelimiterYellow',
+       \ 'RainbowDelimiterBlue',
+       \ 'RainbowDelimiterOrange',
+       \ 'RainbowDelimiterGreen',
+       \ 'RainbowDelimiterViolet',
+       \ 'RainbowDelimiterCyan',
+    \ ],
+\ }
+"""
